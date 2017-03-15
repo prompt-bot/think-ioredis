@@ -30,15 +30,15 @@ export default class extends Base {
    * get session
    * @return {Promise} []
    */
-  async getData(){
+  getData(){
     
     if(this.data){
       return this.data;
     }
 
-    let instance =await this.getConnection();
+    let instance = this.getConnection();
 
-    let data = await think.await(`session_${this.cookie}`, () => {
+    let data = think.await(`session_${this.cookie}`, () => {
       return instance.get(this.cookie);
     });
     this.data = {};
@@ -53,7 +53,7 @@ export default class extends Base {
    * @param  {String} name []
    * @return {Promise}      []
    */
-  async get(name){
+  get(name){
     return this.getData().then(()=>{this.prefix + name})
   }
   /**

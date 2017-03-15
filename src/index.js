@@ -1,9 +1,9 @@
 'use strict'
 
-import Store from './adapter/session'
+import Socket from './adapter/socket'
 import Cache from './adapter/cache'
 import Session from './adapter/session'
 export default {
-  Session,
+  Socket,
   Cache,
 Session}
