@@ -20,7 +20,6 @@ export default class extends Base {
     delete config.nodes
     delete config.type
     this.options = config
-    console.log(this.options)
     this.prefix = this.options.prefix || ''
     this.timeout = this.options.timeout || 0
     this.cookie = this.options.cookie;
@@ -30,18 +29,14 @@ export default class extends Base {
    * get session
    * @return {Promise} []
    */
-  getData(){
+  async getData(){
     
     if(this.data){
       return this.data;
     }
-
     let instance = this.getConnection();
-
-    let data = think.await(`session_${this.cookie}`, () => {
-      return instance.get(this.cookie);
-    });
-    this.data = {};
+  
+    const data = await instance.get(this.prefix + this.cookie);
     try{
       this.data = JSON.parse(data) || {};
     }catch(e){}
@@ -54,7 +49,9 @@ export default class extends Base {
    * @return {Promise}      []
    */
   get(name){
-    return this.getData().then(()=>{this.prefix + name})
+    return this.getData().then(() => {
+      return !name ? this.data : this.data[name];
+    });
   }
   /**
    * set data
@@ -63,7 +60,12 @@ export default class extends Base {
    * @param {Number} timeout []
    */
   set(name, value, timeout){
-   return this.getConnection().set(this.prefix + name, value, 'EX', this.timeout)
+    if(timeout){
+      this.timeout = timeout;
+    }
+    return this.getData().then(() => {
+      this.data[name] = value;
+    });
   }
   /**
    * delete data
@@ -71,16 +73,22 @@ export default class extends Base {
    * @return {Promise}      []
    */
   delete(name){
-    return this.getConnection().del(this.prefix + name)
+    return this.getData().then(() => {
+      if(name){
+        delete this.data[name];
+      }else{
+        this.data = {};
+      }
+    });
   }
   /**
    * flush data
    * @return {Promise} []
    */
-   flush(){
-    return this.getData().then(async () => {
-     let instance =await  this.getConnection();
-     return instance.set(this.cookie, JSON.stringify(this.data), this.timeout);
+  flush(){
+    return this.getData().then(() => {
+      let instance = this.getConnection();
+      return instance.set(this.prefix + this.cookie, JSON.stringify(this.data), 'EX', this.timeout);
     });
   }
 }

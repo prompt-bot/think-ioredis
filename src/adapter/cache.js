@@ -12,17 +12,15 @@ export default class extends Base {
    * @return {[]}         []
    */
   init (config) {
-    super.init()
     config = think.parseConfig(think.config('ioredis'), config)
     this.nodes = config.nodes || [
       { host: '127.0.0.1', port: 6379 }
     ]
     delete config.nodes
-    delete config.type
     this.options = config
-    console.log(this.options)
     this.prefix = this.options.prefix || ''
     this.timeout = this.options.timeout || 0
+    super.init()
     this.gcType = 'cache_ioredis'
     think.gc(this)
   }

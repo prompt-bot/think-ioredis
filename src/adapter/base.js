@@ -1,6 +1,6 @@
 'use strict'
 
-import Redis from 'ioredis'
+import ioRedis from 'ioredis'
 /**
  * socket base class
  */
@@ -24,7 +24,7 @@ export default class extends think.adapter.base {
     // log mongodb connection infomation
     if (think.config.log_connect) {
       think.log(colors => {
-        return `Connect ${type} with ` + colors.magenta(str)
+        return `Connect ${type} with ioredis ` + colors.magenta(str)
       }, 'SOCKET')
     }
   }
@@ -40,10 +40,10 @@ export default class extends think.adapter.base {
     let str = 'nodes:' + JSON.stringify(this.nodes) + ' =====> '
     try {
       if (this.nodes.length === 1) {
-        this.connection = new Redis(this.nodes[0].host, this.nodes[0].port, this.options)
+        this.connection = new ioRedis(this.nodes[0].host, this.nodes[0].port, this.options)
         str += 'Redis Model'
       }else {
-        this.connection = new Redis.Cluster(this.nodes, this.options)
+        this.connection = new ioRedis.Cluster(this.nodes, this.options)
         str += 'Redis Cluster Model'
       }
       this.logConnect(str, 'redis')
