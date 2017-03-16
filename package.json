@@ -1,7 +1,7 @@
 {
   "name": "think-ioredis",
   "description": "thinkjs session,cache adapter for redis Cluster",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "shaddock",
     "email": "hushaung123a@gmail.com"
